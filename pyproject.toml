@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "sei-chatbot"
+version = "0.1.0"
+description = "Chatbot para consultar informações do SEI do TRE-RN"
+authors = ["Yuri Iohanssen Ribeiro Damasceno <yuri.damasceno.residente@tre-rn.jus.br>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = ">=1.29.0"
+langchain = ">=0.1.0"
+langchain-ollama = ">=0.0.1"
+langchain-groq = ">=0.1.0"
+langchain-google-genai = ">=0.0.1"
+langgraph = ">=0.0.20"
+langgraph-supervisor = ">=0.0.3"
+pyyaml = ">=6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
