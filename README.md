@@ -1,137 +1,136 @@
 <h1 align="center">SEI Chatbot</h1> 
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.12+-blue?logo=python" alt="Python version">
-  <img src="https://img.shields.io/badge/Streamlit-1.29.0+-green?logo=streamlit" alt="Streamlit version">
-  <img src="https://img.shields.io/badge/LangGraph-0.0.20+-orange" alt="LangGraph version">
+    <img src="https://img.shields.io/badge/Python-3.12+-blue?logo=python" alt="Python version">
+    <img src="https://img.shields.io/badge/Streamlit-1.29.0+-green?logo=streamlit" alt="Streamlit version">
+    <img src="https://img.shields.io/badge/LangGraph-0.0.20+-orange" alt="LangGraph version">
 </div>
 
-## Visão Geral
+## Overview
 
-O SEI Chatbot é um sistema inteligente para consultar informações de processos administrativos no Sistema Eletrônico de Informações (SEI) do Tribunal Regional Eleitoral do Rio Grande do Norte (TRE-RN). O projeto utiliza uma arquitetura de agentes múltiplos (multi-agent) para processar e responder perguntas dos usuários sobre processos e documentos no sistema SEI.
+SEI Chatbot is an intelligent system for querying information about administrative processes in the Electronic Information System (SEI) of the Regional Electoral Court of Rio Grande do Norte (TRE-RN). The project uses a multi-agent architecture to process and answer user questions about processes and documents in the SEI system.
 
-## Funcionalidades
+## Features
 
-- **Consulta de Processos**: Permite buscar processos por número de identificação
-- **Listar Documentos**: Lista todos os documentos associados a um processo específico
-- **Busca por Tipo de Documento**: Filtra documentos de um processo por tipo específico
-- **Interface Conversacional**: Interface em Streamlit que permite interação natural com o chatbot
+- **Process Queries**: Allows searching for processes by identification number
+- **Document Listing**: Lists all documents associated with a specific process
+- **Document Type Search**: Filters documents in a process by specific type
+- **Conversational Interface**: Streamlit interface that allows natural interaction with the chatbot
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 - **Backend**: Python, LangGraph, LangChain
-- **LLMs**: Groq, Google Gemini, Ollama (configurável)
+- **LLMs**: Groq, Google Gemini, Ollama (configurable)
 - **Interface**: Streamlit
-- **Monitoramento**: Weights & Biases (Weave)
-- **Controle de Versões**: Poetry
+- **Monitoring**: Weights & Biases (Weave)
+- **Version Control**: Poetry
 
-## Arquitetura Multi-Agent
+## Multi-Agent Architecture
 
-O sistema utiliza uma arquitetura de múltiplos agentes para processar e responder às consultas:
+The system uses a multi-agent architecture to process and respond to queries:
 
-1. **Supervisor Model**: Modelo responsável por coordenar o fluxo de trabalho e decidir qual agente especializado deve tratar a consulta do usuário.
+1. **Supervisor Model**: Model responsible for coordinating the workflow and deciding which specialized agent should handle the user's query.
 
-2. **SEI Research Agent**: Agente especializado em obter informações sobre processos do SEI, equipado com ferramentas específicas:
-   - [`search_process`](tools.py ): Localiza processos pelo número
-   - [`get_document_list_from_process`](tools.py ): Lista documentos de um processo
-   - [`get_document_by_type`](tools.py ): Filtra documentos por tipo
+2. **SEI Research Agent**: Agent specialized in obtaining information about SEI processes, equipped with specific tools:
+     - [`search_process`](tools.py): Locates processes by number
+     - [`get_document_list_from_process`](tools.py): Lists documents from a process
+     - [`get_document_by_type`](tools.py): Filters documents by type
 
 ```mermaid
 graph TD
-    A[Usuário] -->|Pergunta| B[Chatbot Interface]
-    B -->|Consulta| C[Supervisor Model]
-    C -->|Delega| D[SEI Research Agent]
-    D -->|Usa| E[search_process]
-    D -->|Usa| F[get_document_list_from_process]
-    D -->|Usa| G[get_document_by_type]
-    D -->|Resposta| C
-    C -->|Resposta Formatada| B
-    B -->|Resposta Final| A
+        A[User] -->|Question| B[Chatbot Interface]
+        B -->|Query| C[Supervisor Model]
+        C -->|Delegates| D[SEI Research Agent]
+        D -->|Uses| E[search_process]
+        D -->|Uses| F[get_document_list_from_process]
+        D -->|Uses| G[get_document_by_type]
+        D -->|Response| C
+        C -->|Formatted Response| B
+        B -->|Final Response| A
 ```
-## Instalação
-1. Clone o repositório:
+## Installation
+1. Clone the repository:
 ```bash
-git clone https://github.com/seu-usuario/sei-chatbot.git
+git clone https://github.com/your-username/sei-chatbot.git
 cd sei-chatbot
 ```
 
-2. Configure as chaves de API no arquivo .env:
+2. Configure API keys in the .env file:
 ```bash
-GROQ_API_KEY=sua-chave-groq
-GOOGLE_API_KEY=sua-chave-google
-WANDB_API_KEY=sua-chave-wandb
+GROQ_API_KEY=your-groq-key
+GOOGLE_API_KEY=your-google-key
+WANDB_API_KEY=your-wandb-key
 ```
 
-3. Instale as dependências com o Poetry
+3. Install dependencies with Poetry
 ```bash
 poetry install
 ```
-## Executando a Aplicação
+## Running the Application
 
-
-1. Inicie o aplicativo Streamlit:
+1. Start the Streamlit app:
 ```bash
 poetry run streamlit run Chatbot.py
 ```
 
-2. Acesse a interface do chatbot em http://localhost:8501
+2. Access the chatbot interface at http://localhost:8501
 
 
-## Configuração de Modelos
-Os modelos utilizados pelos agentes podem ser configurados no arquivo Chatbot.py. Atualmente, o sistema suporta:
+## Model Configuration
+The models used by agents can be configured in the Chatbot.py file. Currently, the system supports:
 
-- Groq: Modelos como llama-3.3-70b-versatile
-- Google: Modelos como gemini-2.0-flash-lite
-- Ollama: Modelos locais (requer instalação separada do Ollama)
+- Groq: Models like llama-3.3-70b-versatile
+- Google: Models like gemini-2.0-flash-lite
+- Ollama: Local models (requires separate Ollama installation)
 
 ```python
 models = {
-    "supervisor": {
-        "provider": "groq",
-        "model": "llama-3.3-70b-versatile",
-        "temperature": 0.0
-    },
-    "agent": {
-        "provider": "google",
-        "model": "gemini-2.0-flash-lite",
-        "temperature": 0.0
-    },
+        "supervisor": {
+                "provider": "groq",
+                "model": "llama-3.3-70b-versatile",
+                "temperature": 0.0
+        },
+        "agent": {
+                "provider": "google",
+                "model": "gemini-2.0-flash-lite",
+                "temperature": 0.0
+        },
 }
 ```
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 sei-chatbot/
 ├── __pycache__/
-├── .env                    # Arquivo de variáveis de ambiente
-├── Chatbot.py              # Interface Streamlit
-├── MultiAgent.py           # Implementação dos agentes
-├── multiagent_chatbot.ipynb  # Notebook para testes
-├── processos/              # Diretório com estrutura de processos SEI
-│   └── SEI_XXXXX_YYYY/     # Pastas de processos específicos
-├── poetry.lock             # Lock file do Poetry
-├── pyproject.toml          # Configuração do projeto
-├── README.md               # Documentação
-└── tools.py                # Ferramentas utilizadas pelos agentes
+├── .env                    # Environment variables file
+├── Chatbot.py              # Streamlit interface
+├── MultiAgent.py           # Agent implementation
+├── multiagent_chatbot.ipynb  # Testing notebook
+├── processos/              # Directory with SEI process structure
+│   └── SEI_XXXXX_YYYY/     # Specific process folders
+├── poetry.lock             # Poetry lock file
+├── pyproject.toml          # Project configuration
+├── README.md               # Documentation
+└── tools.py                # Tools used by agents
 ```
 
-## Como Usar
-1. Inicie a aplicação conforme instruções acima
-1. Faça perguntas sobre processos SEI como:
-   - "O processo 00166/2025 existe?"
-   - "Quais documentos existem no processo 00242/2024?"
-   - "Quais documentos do tipo Anexo existem no processo 00242/2024?"
+## How to Use
+1. Start the application as instructed above
+1. Ask questions about SEI processes such as:
+    - "O processo 00166/2025 existe?" (Does process 00166/2025 exist?)
+    - "Quais documentos existem no processo 00242/2024?" (What documents exist in process 00242/2024?)
+    - "Quais documentos do tipo Anexo existem no processo 00242/2024?" (What Annex-type documents exist in process 00242/2024?)
 
-## Requisitos do Sistema
+## System Requirements
 - Python 3.12+
-- Poetry (gerenciador de pacotes)
-- Acesso à internet (para API dos modelos de linguagem)
+- Poetry (package manager)
+- Internet access (for language model APIs)
 
-## Desenvolvimento
-Para contribuir com o projeto:
+## Development
+To contribute to the project:
 
-1. Crie um ambiente virtual com Poetry
-1. Realize suas alterações
-1. Execute testes para garantir compatibilidade
-1. Envie um pull request com suas melhorias
+1. Create a virtual environment with Poetry
+1. Make your changes
+1. Run tests to ensure compatibility
+1. Submit a pull request with your improvements
