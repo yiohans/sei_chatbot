@@ -73,7 +73,7 @@ poetry install
 poetry run streamlit run Chatbot.py
 ```
 
-2. Access the chatbot interface at http://localhost:8501
+2. Access the chatbot interface at http://localhost:8502
 
 
 ## Model Configuration
