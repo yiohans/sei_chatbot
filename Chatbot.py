@@ -127,15 +127,19 @@ def main():
         download_thread.daemon = True
         download_thread.start()
         logging.info("Download thread started")
+        download_thread.join()
+        st.session_state["download_started"] = True
+        download_thread = threading.Thread(target=background_download)
+        download_thread.daemon = True
+        download_thread.start()
+        logging.info("Download thread started")
     
     # Check for download completion
     # This explicit check ensures we detect completion from the background thread
     if download_complete:
         st.session_state["download_complete"] = True
         logging.info("Main thread detected download completion")
-    if download_error:
-        st.session_state["download_error"] = download_error
-    
+        st.experimental_rerun()
     # Force refresh every few seconds while downloading
     if not st.session_state["download_complete"] and st.session_state["download_started"]:
         # This creates an invisible element that changes every second to trigger reruns
@@ -159,7 +163,8 @@ def main():
         st.chat_message(msg["role"]).write(msg["content"])
     
     # Handle user input
-    if prompt := st.chat_input():
+    prompt = st.chat_input()
+    if prompt:
         # Add user message to chat
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
@@ -175,10 +180,6 @@ def main():
                     {"messages": st.session_state['messages']},
                     recursion_limit=25
                     )
-                
-                # Create a placeholder for the assistant's message
-                message_placeholder = st.chat_message("assistant")
-                assistant_content = ""
                 
                 # Add logging for debugging
                 logging.info(f"Starting to process stream for prompt: {prompt[:30]}...")
@@ -196,7 +197,7 @@ def main():
                         # This prevents partial messages from being displayed
                         assistant_content = content
                         # Update the displayed message with complete content
-                        message_placeholder.markdown(assistant_content)
+                        st.chat_message("assistant").markdown(assistant_content)
                 
                 # Only append the final response to session state
                 if assistant_content:
