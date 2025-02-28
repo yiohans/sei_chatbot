@@ -109,6 +109,11 @@ def main():
     st.caption((
         "Um chatbot para responder perguntas sobre processos no Sistema Eletrônico "
         "de Informações (SEI) do Tribunal Regional Eleitoral do Rio Grande do Norte (TRE-RN). "
+        "Atualmente é possível responder perguntas como: "
+        "\"O processo XXX/XXXX existe? \", "
+        "\"Quantos documentos tem o processo XXX/XXXX?\", "
+        "\"Quais são os documentos do tipo xxxxxx do processo XXX/XXXX?\" e "
+        "\"Quais são os documentos de X a Y do processo XXX/XXXX?\""
     ))
     
     # Initialize session state
