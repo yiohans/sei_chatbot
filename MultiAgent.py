@@ -90,3 +90,41 @@ class MultiAgents:
                 )
                 
         return llm_supervisor, llm_agent
+    
+    def initialize_agent(self, name, prompt, tools):
+        self.logger.info((
+            f"Initializing agent: {name} with prompt:\n \"{prompt}\"\n"
+            f"and tools: \n{tools}"
+            ))
+        agent =  create_react_agent(
+            self.agent_model,
+            name=name,
+            tools=tools,
+            prompt=prompt,
+        )
+        return agent
+    
+    def initialize_graph(self, prompt):
+        self.logger.info(f"Initializing graph with supervisor prompt:\n\"{prompt}\"")
+        workflow = create_supervisor(
+            [self.research_agent],
+            model=self.supervisor_model,
+            prompt=prompt,
+            output_mode="last_message"
+        )
+        return workflow.compile()
+    
+    def run(self, messages, recursion_limit=10):
+        self.logger.info(f"Running MultiAgents with messages:\n{messages}")
+        return self.graph.invoke(
+            messages,
+            {"recursion_limit": recursion_limit}
+        )
+    
+    def stream(self, messages, recursion_limit=10):
+        self.logger.info(f"Streaming MultiAgents with messages:\n{messages}")
+        return self.graph.stream(
+            messages,
+            {"recursion_limit": recursion_limit},
+            stream_mode="values"
+        )
