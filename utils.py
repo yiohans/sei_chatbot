@@ -34,7 +34,7 @@ def download_and_extract_zip_from_drive(file_id, output_dir="processos", session
     os.makedirs(output_dir, exist_ok=True)
     logger.debug(f"Created/verified output directory: {output_dir}")
     
-    zip_path = os.path.join(output_dir, "downloaded_file.zip")
+    zip_path = os.path.join("/tmp", "downloaded_file.zip")
     
     try:
         # Download with gdown
