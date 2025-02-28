@@ -1,4 +1,5 @@
 import subprocess
+import logging
 
 from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq
@@ -10,6 +11,13 @@ from tools import *
 
 class MultiAgents:
     def __init__(self, models):
+        # Configure logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        self.logger = logging.getLogger(__name__)
+        
         self.supervisor_model, self.agent_model = self.initialize_models(models)
         # self.chat_agent = self.initialize_agent(
         #     name="chat_agent",
@@ -34,19 +42,18 @@ class MultiAgents:
             "Lembre que o usuário NÃO CONSEGUE LER as mensagens dos agentes, portanto, "
             "ORGANIZE, FORMATE e REPITA as informações relevantes que os especialistas fornecerem e escreva "
             "respostas claras e concisas para o usuário."
-
         ))
 
     def initialize_models(self, models):
         match models['supervisor']["provider"]:
             case "groq":
-                print("Using Groq model for supervisor")
+                self.logger.info("Using Groq model for supervisor")
                 llm_supervisor = ChatGroq(
                     model=models['supervisor']['model'],
                     temperature=models['supervisor']['temperature']
                 )
             case "ollama":
-                print("Using Ollama model for supervisor")
+                self.logger.info("Using Ollama model for supervisor")
                 llm_supervisor = ChatOllama(
                     model=models['supervisor']['model'],
                     temperature=models['supervisor']['temperature']
@@ -54,7 +61,7 @@ class MultiAgents:
                 model_name = models['supervisor']['model']
                 subprocess.run(["ollama", "pull", model_name])
             case "google":
-                print("Using Google Generative AI model for supervisor")
+                self.logger.info("Using Google Generative AI model for supervisor")
                 llm_supervisor = ChatGoogleGenerativeAI(
                     model=models['supervisor']['model'],
                     temperature=models['supervisor']['temperature']
@@ -62,13 +69,13 @@ class MultiAgents:
                 
         match models['agent']['provider']:
             case "groq":
-                print("Using Groq model for agent")
+                self.logger.info("Using Groq model for agent")
                 llm_agent = ChatGroq(
                     model=models['agent']['model'],
                     temperature=models['agent']['temperature']
                 )
             case "ollama":
-                print("Using Ollama model for agent")
+                self.logger.info("Using Ollama model for agent")
                 llm_agent = ChatOllama(
                     model=models['agent']['model'],
                     temperature=models['agent']['temperature']
@@ -76,41 +83,10 @@ class MultiAgents:
                 model_name = models['agent']['model']
                 subprocess.run(["ollama", "pull", model_name])
             case "google":
-                print("Using Google Generative AI model for agent")
+                self.logger.info("Using Google Generative AI model for agent")
                 llm_agent = ChatGoogleGenerativeAI(
                     model=models['agent']['model'],
                     temperature=models['agent']['temperature']
                 )
                 
         return llm_supervisor, llm_agent
-    
-    def initialize_agent(self, name, prompt, tools):
-        agent =  create_react_agent(
-            self.agent_model,
-            name=name,
-            tools=tools,
-            prompt=prompt,
-        )
-        return agent
-    
-    def initialize_graph(self, prompt):
-        workflow = create_supervisor(
-            [self.research_agent],
-            model=self.supervisor_model,
-            prompt=prompt,
-            output_mode="last_message"
-        )
-        return workflow.compile()
-    
-    def run(self, messages, recursion_limit=10):
-        return self.graph.invoke(
-            messages,
-            {"recursion_limit": recursion_limit}
-        )
-    
-    def stream(self, messages, recursion_limit=10):
-        return self.graph.stream(
-            messages,
-            {"recursion_limit": recursion_limit},
-            stream_mode="values"
-        )
