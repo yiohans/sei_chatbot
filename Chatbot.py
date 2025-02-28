@@ -3,33 +3,59 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import weave
 from typing import Optional, Tuple
+import threading
+import time
+import os
 
 from MultiAgent import MultiAgents
+from utils import download_and_extract_zip_from_drive
 
-import logging, os
+import logging
 logging.basicConfig(level=logging.INFO)
 
 # Load environment variables
-load_dotenv(
-    override=True
-)
-
+load_dotenv(override=True)
 logging.info("Loaded environment variables")
-logging.info(f"GROQ_API_KEY: {os.getenv('GROQ_API_KEY')}")
-logging.info(f"WANDB_API_KEY: {os.getenv('WANDB_API_KEY')}")
 
 # Initialize Weave
 weave.init("streamlit_sei")
 
+# Global variables for download status
+download_complete = False
+download_error = None
+download_thread = None
+
 def initialize_session_state():
     """Initialize the session state with a welcome message."""
     if "messages" not in st.session_state:
-        st.session_state['messages'] = [
-            # {
-            #     "role": "assistant",
-            #     "content": "Olá! Como posso ajudar você com o Sistema Eletrônico de Informações (SEI)?"
-            # }
-        ]
+        st.session_state['messages'] = []
+    
+    # Initialize download state
+    if "download_complete" not in st.session_state:
+        st.session_state["download_complete"] = False
+    if "download_error" not in st.session_state:
+        st.session_state["download_error"] = None
+    if "download_started" not in st.session_state:
+        st.session_state["download_started"] = False
+    
+    # Check if files already exist (in case of page refresh)
+    if os.path.exists("processos") and os.listdir("processos"):
+        st.session_state["download_complete"] = True
+
+def background_download():
+    """Run the download in a background thread without accessing Streamlit context"""
+    try:
+        global download_complete, download_error
+        success = download_and_extract_zip_from_drive("1H8KAkOmYcEk98YtWiufVHXFgPvdTnXbC")
+        if success:
+            download_complete = True
+            logging.info("Download completed successfully and global variable set")
+        else:
+            download_error = "Download failed"
+            logging.error("Download failed")
+    except Exception as e:
+        download_error = str(e)
+        logging.error(f"Error during download: {e}")
 
 def get_message(message_data) -> Optional[Tuple[str, str]]:
     """
@@ -81,14 +107,42 @@ def main():
     st.caption((
         "Um chatbot para responder perguntas sobre processos no Sistema Eletrônico "
         "de Informações (SEI) do Tribunal Regional Eleitoral do Rio Grande do Norte (TRE-RN). "
-        "Hoje é possível responder perguntas como: "
-        " \"O processo XXX/XXXX existe? \", "
-        " \"Quais são os documentos do processo XXX/XXXX?\" "
-        " e \"Quais documentos do tipo xxxxxx do processo XXX/XXXX?\""
-        ))
+    ))
     
     # Initialize session state
     initialize_session_state()
+    
+    # Start the download in a background thread if not already completed
+    global download_thread, download_complete
+    if not st.session_state["download_complete"] and not st.session_state["download_started"]:
+        st.session_state["download_started"] = True
+        download_thread = threading.Thread(target=background_download)
+        download_thread.daemon = True
+        download_thread.start()
+        logging.info("Download thread started")
+    
+    # Check for download completion
+    # This explicit check ensures we detect completion from the background thread
+    if download_complete:
+        st.session_state["download_complete"] = True
+        logging.info("Main thread detected download completion")
+    if download_error:
+        st.session_state["download_error"] = download_error
+    
+    # Force refresh every few seconds while downloading
+    if not st.session_state["download_complete"] and st.session_state["download_started"]:
+        # This creates an invisible element that changes every second to trigger reruns
+        st.empty().text(f"Checking download status... {time.time()}")
+        time.sleep(1)
+        st.rerun()
+    
+    # Display download status
+    if not st.session_state["download_complete"]:
+        st.sidebar.info("⏳ Baixando arquivos necessários... Você já pode começar a conversar enquanto isso.")
+        if st.session_state.get("download_error"):
+            st.sidebar.error(f"Erro no download: {st.session_state['download_error']}")
+    else:
+        st.sidebar.success("✅ Arquivos necessários carregados com sucesso!")
     
     # Setup agents
     agents = setup_agents()
@@ -103,6 +157,10 @@ def main():
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         
+        # Add a warning if the download is still in progress
+        if not st.session_state["download_complete"]:
+            st.warning("O download dos arquivos ainda está em andamento. Algumas funcionalidades podem estar limitadas.")
+        
         try:
             # Stream the response
             with st.spinner("Processando sua pergunta..."):
@@ -113,7 +171,6 @@ def main():
                 
                 # Create a placeholder for the assistant's message
                 message_placeholder = st.chat_message("assistant")
-                full_response = ""
                 assistant_content = ""
                 
                 # Add logging for debugging

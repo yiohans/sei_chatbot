@@ -19,8 +19,12 @@ langgraph-supervisor = ">=0.0.3"
 pyyaml = ">=6.0"
 dotenv = "^0.9.9"
 weave = "^0.51.35"
+gdown = "^5.2.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[virtualenvs]
+in-project = true
