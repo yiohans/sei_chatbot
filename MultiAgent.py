@@ -32,7 +32,8 @@ class MultiAgents:
             "Use sei_research_agent para responder perguntas sobre processos no "
             "Sistema Eletrônico de Informações (SEI) do TRE do Rio Grande do Norte (TRE-RN). "
             "Lembre que o usuário NÃO CONSEGUE LER as mensagens dos especialistas, então "
-            "organize e repita para o usuário as informações relevantes que os especialistas fornecerem. "
+            "ORGANIZE e FORMATE as informações relevantes que os especialistas fornecerem e escreva "
+            "respostas claras e concisas para o usuário."
 
         ))
 
