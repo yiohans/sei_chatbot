@@ -122,10 +122,10 @@ sei-chatbot/
 
 ## How to Use
 1. Start the application as instructed above
-2. Ask questions about SEI processes such as:
-        - "O processo 00166/2025 existe?" (Does process 00166/2025 exist?)
-        - "Quais documentos existem no processo 00242/2024?" (What documents exist in process 00242/2024?)
-        - "Quais documentos do tipo Anexo existem no processo 00242/2024?" (What Annex-type documents exist in process 00242/2024?)
+2. Ask questions about SEI processes such as:  
+    - "O processo 00166/2025 existe?" (Does process 00166/2025 exist?)
+    - "Quais documentos existem no processo 00242/2024?" (What documents exist in process 00242/2024?)
+    - "Quais documentos do tipo Anexo existem no processo 00242/2024?" (What Annex-type documents exist in process 00242/2024?)
 
 ## System Requirements
 - Python 3.11+
