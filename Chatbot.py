@@ -44,9 +44,11 @@ def initialize_session_state():
 
 def background_download():
     """Run the download in a background thread without accessing Streamlit context"""
+    import os
+    GDRIVE_FILE_ID = os.getenv('GDRIVE_FILE_ID')
     try:
         global download_complete, download_error
-        success = download_and_extract_zip_from_drive("1H8KAkOmYcEk98YtWiufVHXFgPvdTnXbC")
+        success = download_and_extract_zip_from_drive(GDRIVE_FILE_ID, output_dir="processos")
         if success:
             download_complete = True
             logging.info("Download completed successfully and global variable set")

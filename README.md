@@ -1,7 +1,7 @@
 <h1 align="center">SEI Chatbot</h1> 
 
 <div align="center">
-    <img src="https://img.shields.io/badge/Python-3.12+-blue?logo=python" alt="Python version">
+    <img src="https://img.shields.io/badge/Python-3.11+-blue?logo=python" alt="Python version">
     <img src="https://img.shields.io/badge/Streamlit-1.29.0+-green?logo=streamlit" alt="Streamlit version">
     <img src="https://img.shields.io/badge/LangGraph-0.0.20+-orange" alt="LangGraph version">
 </div>
@@ -73,7 +73,7 @@ poetry install
 poetry run streamlit run Chatbot.py
 ```
 
-2. Access the chatbot interface at http://localhost:8502
+2. Access the chatbot interface at http://localhost:8501
 
 
 ## Model Configuration
