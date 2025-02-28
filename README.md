@@ -11,6 +11,8 @@
 
 SEI Chatbot is an intelligent system for querying information about administrative processes in the Electronic Information System (SEI) of the Regional Electoral Court of Rio Grande do Norte (TRE-RN). The project uses a multi-agent architecture to process and answer user questions about processes and documents in the SEI system.
 
+The Contract Management Section (SEGEC) of TRE-RN frequently needs to consult SEI data to verify contract payments and validate information in documents such as Commitment Notes, Technical Notes, and Banking Orders. This necessity motivated the development of this Proof of Concept (PoC) chatbot for SEI. The objective is to leverage Artificial Intelligence to automate document reading and standardized information extraction, reducing manual effort and increasing process efficiency.
+
 ## Features
 
 - **Process Queries**: Allows searching for processes by identification number
