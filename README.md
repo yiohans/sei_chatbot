@@ -24,7 +24,7 @@ SEI Chatbot is an intelligent system for querying information about administrati
 - **LLMs**: Groq, Google Gemini, Ollama (configurable)
 - **Interface**: Streamlit
 - **Monitoring**: Weights & Biases (Weave)
-- **Version Control**: Poetry
+- **Dependence Management**: Poetry
 
 ## Multi-Agent Architecture
 
@@ -128,7 +128,7 @@ sei-chatbot/
         - "Quais documentos do tipo Anexo existem no processo 00242/2024?" (What Annex-type documents exist in process 00242/2024?)
 
 ## System Requirements
-- Python 3.12+
+- Python 3.11+
 - Poetry (package manager)
 - Internet access (for language model APIs)
 
