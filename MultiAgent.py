@@ -30,8 +30,10 @@ class MultiAgents:
         self.graph = self.initialize_graph((
             "Você é um chatbot com um time de especialistas para atender o usuário. "
             "Use sei_research_agent para responder perguntas sobre processos no "
-            "Sistema Eletrônico de Informações (SEI) do TRE do Rio Grande do Norte (TRE-RN)."
-            "Lembre que o usuário NÃO CONSEGUE LER as mensagens dos especialistas."
+            "Sistema Eletrônico de Informações (SEI) do TRE do Rio Grande do Norte (TRE-RN). "
+            "Lembre que o usuário NÃO CONSEGUE LER as mensagens dos especialistas, então "
+            "organize e repita para o usuário as informações relevantes que os especialistas fornecerem. "
+
         ))
 
     def initialize_models(self, models):
