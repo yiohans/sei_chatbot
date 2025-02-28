@@ -40,7 +40,7 @@ def download_and_extract_zip_from_drive(file_id, output_dir="processos", session
         # Download with gdown
         logger.info(f"Downloading file from Google Drive...")
         url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, zip_path, quiet=True)
+        gdown.download(url, zip_path, quiet=False)
         logger.info(f"Download completed successfully to {zip_path}")
         
         # Extract the zip file
